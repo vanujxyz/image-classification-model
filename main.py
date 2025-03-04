@@ -1,25 +1,25 @@
-# Import necessary libraries
+# Imports
 import tensorflow as tf
-from tensorflow.keras.datasets import cifar10
-from tensorflow.keras.utils import to_categorical
-import matplotlib.pyplot as plt
-from tensorflow.keras.models import Sequential, load_model
-from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout, BatchNormalization
-from tensorflow.keras.callbacks import EarlyStopping
-from sklearn.metrics import classification_report
+from tensorflow.keras.datasets import cifar10 #for the dataset
+from tensorflow.keras.utils import to_categorical ##for the dataset
+import matplotlib.pyplot as plt #for the dataset
+from tensorflow.keras.models import Sequential, load_model #for training the cnn
+from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout, BatchNormalization #for training the cnn
+from tensorflow.keras.callbacks import EarlyStopping #for training the cnn
+from sklearn.metrics import classification_report #for testing
 import os
 
-# Step 1: Load and Preprocess CIFAR-10 Dataset
+#loading model
 (x_train, y_train), (x_test, y_test) = cifar10.load_data()
 
-# Normalize images to range [0, 1]
+# Normalising the dataset
 x_train, x_test = x_train / 255.0, x_test / 255.0
 
-# Convert labels to one-hot encoding
+# converting labels to encoding format
 y_train = to_categorical(y_train, 10)
 y_test = to_categorical(y_test, 10)
 
-# Visualize some example images
+# testing the dataset
 class_names = ['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
 plt.figure(figsize=(10, 10))
 for i in range(9):
@@ -29,7 +29,7 @@ for i in range(9):
     plt.axis('off')
 plt.show()
 
-# Step 2: Define Model Architecture
+#model training function
 def build_model():
     model = Sequential([
         # First Convolutional Block
@@ -47,21 +47,21 @@ def build_model():
         BatchNormalization(),
         MaxPooling2D(2, 2),
 
-        # Flatten and Fully Connected Layers
+        # Flattening and connecting the layers
         Flatten(),
         Dense(128, activation='relu'),
         Dropout(0.5),
         Dense(10, activation='softmax')  # 10 output classes
     ])
     
-    # Compile the model
+    # Compiling model
     model.compile(optimizer='adam',
                   loss='categorical_crossentropy',
                   metrics=['accuracy'])
     
     return model
 
-# Step 3: Load or Train the Model
+# loading model for save so that it doesnt train again and again
 model_path = 'image_classification_model.h5'
 
 # Check if the model file exists
@@ -84,7 +84,7 @@ else:
     model.save(model_path)
     print(f"Model trained and saved to {model_path}")
 
-# Step 4: Evaluate the Model
+#TESTING
 test_loss, test_acc = model.evaluate(x_test, y_test, verbose=2)
 print(f'Test Accuracy: {test_acc * 100:.2f}%')
 print(f'Test Loss: {test_loss:.4f}')
